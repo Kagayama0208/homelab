@@ -11,7 +11,7 @@ spec:
       targetRevision: 0.1.102
       helm:
         valueFiles:
-        - \$values/apps/zot/values.yaml
+        - $values/apps/zot/values.yaml
     - repoURL: https://github.com/Kagayama0208/homelab.git
       targetRevision: HEAD
       ref: values
