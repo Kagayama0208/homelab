@@ -14,7 +14,7 @@ spec:
         - $values/apps/metallb/values.yaml
     - repoURL: https://github.com/Kagayama0208/homelab.git
       targetRevision: HEAD
-      ref: apps/metallb/config
+      ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: metallb-system
