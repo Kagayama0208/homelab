@@ -14,6 +14,11 @@ metadata:
     metallb.universe.tf/address-pool: internal-pool
 spec:
   gatewayClassName: envoy
+  infrastructure:
+    parametersRef:
+      group: gateway.envoyproxy.io
+      kind: EnvoyProxy
+      name: internal-proxy
   listeners:
   - name: http
     protocol: HTTP
