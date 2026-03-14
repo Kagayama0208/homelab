@@ -2,3 +2,13 @@ defaultSettings:
   defaultReplicaCount: 2
 persistence:
   defaultClassReplicaCount: 2
+longhorn:
+  default_setting: false
+preUpgradeChecker:
+  jobEnabled: false
+image:
+  longhorn:
+    instanceManager:
+      tag: v1.11.0-hotfix-1
+    manager:
+      tag: v1.11.0-hotfix-1
