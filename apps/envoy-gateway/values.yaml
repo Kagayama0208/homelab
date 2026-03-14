@@ -1,1 +1,7 @@
 # Envoy Gateway values
+crds:
+  gatewayAPI:
+    enabled: true
+    channel: experimental
+  envoyGateway:
+    enabled: true
