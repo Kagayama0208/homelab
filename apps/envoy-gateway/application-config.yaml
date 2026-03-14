@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: envoy-gateway-config
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Kagayama0208/homelab.git
+    targetRevision: HEAD
+    path: apps/envoy-gateway/config
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: envoy-gateway-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
