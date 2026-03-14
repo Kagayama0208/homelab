@@ -11,7 +11,7 @@ spec:
       targetRevision: v1.11.0
       helm:
         valueFiles:
-        - \$values/apps/longhorn/values.yaml
+        - $values/apps/longhorn/values.yaml
     - repoURL: https://github.com/Kagayama0208/homelab.git
       targetRevision: HEAD
       ref: values
@@ -24,3 +24,4 @@ spec:
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
+    - ServerSideApply=true
