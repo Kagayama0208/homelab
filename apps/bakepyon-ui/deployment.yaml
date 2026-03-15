@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bakepyon-ui
+  namespace: bakepyon-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bakepyon-ui
+  template:
+    metadata:
+      labels:
+        app: bakepyon-ui
+    spec:
+      containers:
+      - name: bakepyon-ui
+        image: 192.168.10.54:5000/bakepyon-ui:0.0.1
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bakepyon-ui
+  namespace: bakepyon-ui
+spec:
+  selector:
+    app: bakepyon-ui
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: bakepyon-ui
+  namespace: bakepyon-ui
+spec:
+  parentRefs:
+  - name: external-gateway
+    namespace: envoy-gateway-system
+  hostnames:
+  - "bakepyon-ui.bakepyon.org"
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: bakepyon-ui
+      port: 80
+
