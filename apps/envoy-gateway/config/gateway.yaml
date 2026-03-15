@@ -37,14 +37,20 @@ kind: Gateway
 metadata:
   name: external-gateway
   namespace: envoy-gateway-system
-  annotations:
-    metallb.universe.tf/address-pool: external-pool
 spec:
   gatewayClassName: envoy
+  infrastructure:
+    parametersRef:
+      group: gateway.envoyproxy.io
+      kind: EnvoyProxy
+      name: external-proxy
   listeners:
   - name: http
     protocol: HTTP
     port: 80
+    allowedRoutes:
+      namespaces:
+        from: All
   - name: https
     protocol: HTTPS
     port: 443
