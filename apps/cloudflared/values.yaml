@@ -1,0 +1,5 @@
+replicaCount: 2
+
+cloudflare:
+  secretName: cloudflare-tunnel-token
+  secretKey: token
