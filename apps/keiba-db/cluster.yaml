@@ -7,7 +7,7 @@ spec:
   instances: 1
   bootstrap:
     initdb:
-      database: keiba
+      database: pckeiba
       owner: postgres
       secret:
         name: keiba-db-app
