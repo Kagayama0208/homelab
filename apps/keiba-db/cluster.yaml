@@ -5,8 +5,6 @@ metadata:
   namespace: keiba-db
 spec:
   instances: 1
-  postgresql:
-    version: "17"
   bootstrap:
     initdb:
       database: keiba
