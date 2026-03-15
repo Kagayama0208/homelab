@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: keiba-db
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Kagayama0208/homelab.git
+    targetRevision: HEAD
+    path: apps/keiba-db
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: keiba-db
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true

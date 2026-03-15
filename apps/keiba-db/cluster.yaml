@@ -1,0 +1,20 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: keiba-db
+  namespace: keiba-db
+spec:
+  instances: 1
+  postgresql:
+    version: "17"
+  bootstrap:
+    initdb:
+      database: keiba
+      owner: postgres
+      secret:
+        name: keiba-db-app
+  superuserSecret:
+    name: keiba-db-superuser
+  storage:
+    size: 20Gi
+    storageClass: longhorn
