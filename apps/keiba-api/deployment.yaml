@@ -78,20 +78,6 @@ metadata:
   namespace: keiba
   labels:
     app: keiba-api
-spec:
-  selector:
-    app: keiba-api
-  ports:
-  - port: 8000
-    targetPort: 8000
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: keiba-api
-  namespace: keiba
-  labels:
-    app: keiba-api
   annotations:
     metallb.universe.tf/address-pool: internal-pool
 spec:
