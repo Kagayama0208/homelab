@@ -16,6 +16,9 @@ spec:
       containers:
       - name: bakepyon-ui
         image: 192.168.10.54:5000/bakepyon-ui:0.0.32
+        env:
+        - name: API_BACKEND_URL
+          value: "keiba-api.keiba.svc.cluster.local:8000"
         ports:
         - containerPort: 80
         resources:
@@ -50,6 +53,23 @@ spec:
   hostnames:
   - "bakepyon-ui.bakepyon.org"
   rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /api/
+    backendRefs:
+    - name: keiba-api
+      namespace: keiba
+      port: 8000
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /swagger/
+    backendRefs:
+    - name: bakepyon-api
+      namespace: bakepyon-api
+      port: 8000
+  # それ以外はUI（SPA fallback）
   - matches:
     - path:
         type: PathPrefix
