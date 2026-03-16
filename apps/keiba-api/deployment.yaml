@@ -85,22 +85,19 @@ spec:
   - port: 8000
     targetPort: 8000
 ---
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
+apiVersion: v1
+kind: Service
 metadata:
   name: keiba-api
   namespace: keiba
+  labels:
+    app: keiba-api
+  annotations:
+    metallb.universe.tf/address-pool: internal-pool
 spec:
-  parentRefs:
-  - name: internal-gateway
-    namespace: envoy-gateway-system
-  hostnames:
-  - "api.internal.bakepyon.org"
-  rules:
-  - matches:
-    - path:
-        type: PathPrefix
-        value: /
-    backendRefs:
-    - name: keiba-api
-      port: 8000
+  type: LoadBalancer
+  selector:
+    app: keiba-api
+  ports:
+  - port: 8000
+    targetPort: 8000
