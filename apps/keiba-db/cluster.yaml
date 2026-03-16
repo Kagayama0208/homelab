@@ -11,6 +11,7 @@ spec:
       owner: postgres
       secret:
         name: keiba-db-app
+  enableSuperuserAccess: true
   superuserSecret:
     name: keiba-db-superuser
   storage:
