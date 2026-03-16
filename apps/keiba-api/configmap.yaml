@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keiba-config
+  namespace: keiba
+data:
+  DB_HOST: "192.168.10.55"
+  DB_PORT: "5432"
+  DB_NAME: "pckeiba"
+  DB_USER: "postgres"
+  API_HOST: "0.0.0.0"
+  API_PORT: "8000"
+  API_PREFIX: "/api/v1"
+  JWT_EXPIRY_HOURS: "24"
+  ADMIN_USERNAME: "admin"
+  LOG_LEVEL: "INFO"
+  CDP_ENABLED: "false"
+  CDP_HEADLESS: "false"
+  CHROME_PATH: "/usr/bin/chromium"
+  CDP_USER_DATA_DIR: "/app/chrome-data"
+  CDP_SCREENSHOT_DIR: "/app/screenshots"
