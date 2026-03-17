@@ -33,6 +33,8 @@ spec:
     spec:
       serviceAccountName: writefreely
       automountServiceAccountToken: false
+      securityContext:
+        fsGroup: 5000
       containers:
       - name: writefreely
         image: algernon/writefreely:latest
