@@ -36,6 +36,9 @@ spec:
       containers:
       - name: writefreely
         image: algernon/writefreely:latest
+        securityContext:
+          runAsUser: 5000
+          runAsGroup: 5000
         ports:
         - containerPort: 8080
         env:
