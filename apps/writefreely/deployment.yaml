@@ -87,10 +87,10 @@ metadata:
   namespace: writefreely
 spec:
   parentRefs:
-  - name: external-gateway
+  - name: internal-gateway
     namespace: envoy-gateway-system
   hostnames:
-  - "blog.bakepyon.org"
+  - "kosuke-notebook.internal"
   rules:
   - matches:
     - path:
