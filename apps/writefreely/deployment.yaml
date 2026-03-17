@@ -1,0 +1,108 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: writefreely
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: writefreely-data
+  namespace: writefreely
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: writefreely
+  namespace: writefreely
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: writefreely
+  template:
+    metadata:
+      labels:
+        app: writefreely
+    spec:
+      serviceAccountName: writefreely
+      automountServiceAccountToken: false
+      containers:
+      - name: writefreely
+        image: algernon/writefreely:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: WRITEFREELY_SITE_NAME
+          value: "Kosuke's Notebook"
+        - name: WRITEFREELY_ADMIN_USER
+          valueFrom:
+            secretKeyRef:
+              name: writefreely-secret
+              key: admin_user
+        - name: WRITEFREELY_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: writefreely-secret
+              key: admin_password
+        - name: WRITEFREELY_SINGLE_USER
+          value: "true"
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: writefreely-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: writefreely
+  namespace: writefreely
+spec:
+  selector:
+    app: writefreely
+  ports:
+  - port: 8080
+    targetPort: 8080
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: writefreely
+  namespace: writefreely
+spec:
+  parentRefs:
+  - name: external-gateway
+    namespace: envoy-gateway-system
+  hostnames:
+  - "blog.bakepyon.org"
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: writefreely
+      port: 8080
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: writefreely
+  namespace: writefreely
+automountServiceAccountToken: false  # APIトークン不要
