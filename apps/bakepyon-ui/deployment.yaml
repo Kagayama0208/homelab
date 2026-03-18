@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: bakepyon-ui
-        image: 192.168.10.54:5000/bakepyon-ui:0.0.36
+        image: 192.168.10.54:5000/bakepyon-ui:0.0.4
         env:
         - name: API_BACKEND_URL
           value: "keiba-api.keiba.svc.cluster.local:8000"
