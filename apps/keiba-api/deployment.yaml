@@ -22,7 +22,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: api
-          image: 192.168.10.54:5000/keiba-db-connector:0.0.3
+          image: 192.168.10.54:5000/keiba-db-connector:0.0.4
           ports:
             - containerPort: 8000
               protocol: TCP
