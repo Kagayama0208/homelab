@@ -29,3 +29,8 @@ spec:
               metallb.universe.tf/address-pool: internal-pool
           spec:
             type: LoadBalancer
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: keiba-db-backup-store

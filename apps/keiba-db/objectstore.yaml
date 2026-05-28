@@ -1,0 +1,18 @@
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: keiba-db-backup-store
+  namespace: keiba-db
+spec:
+  retentionPolicy: "7d"
+  configuration:
+    destinationPath: s3://keiba-db-backup/      # ← 作ったバケット名
+    s3Credentials:
+      accessKeyId:     { name: keiba-db-backup-creds, key: ACCESS_KEY_ID }
+      secretAccessKey: { name: keiba-db-backup-creds, key: ACCESS_SECRET_KEY }
+      region:          { name: keiba-db-backup-creds, key: REGION }
+    wal:
+      compression: gzip
+      maxParallel: 2
+    data:
+      compression: gzip
