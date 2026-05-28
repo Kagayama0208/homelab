@@ -31,6 +31,7 @@ spec:
             type: LoadBalancer
   plugins:
     - name: barman-cloud.cloudnative-pg.io
+      enabled: true
       isWALArchiver: true
       parameters:
         barmanObjectName: keiba-db-backup-store
