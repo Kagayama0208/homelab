@@ -6,7 +6,7 @@ metadata:
 spec:
   retentionPolicy: "7d"
   configuration:
-    destinationPath: s3://keiba-db-backup/      # ← 作ったバケット名
+    destinationPath: s3://kosuke-keiba-db-backup-170463783977-ap-northeast-1-an/     # ← 作ったバケット名
     s3Credentials:
       accessKeyId:     { name: keiba-db-backup-creds, key: ACCESS_KEY_ID }
       secretAccessKey: { name: keiba-db-backup-creds, key: ACCESS_SECRET_KEY }
