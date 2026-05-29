@@ -1,13 +1,13 @@
-apiVersion: postgresql.cnpg.io/v1
-kind: ScheduledBackup
-metadata:
-  name: keiba-db-daily
-  namespace: keiba-db
-spec:
-  immediate: true                # 作成時に即1回バックアップ
-  schedule: "0 0 18 * * *"       # 6フィールド(秒始まり)。18:00UTC = 翌03:00JST
-  backupOwnerReference: self
-  method: plugin
-  cluster: { name: keiba-db }
-  pluginConfiguration:
-    name: barman-cloud.cloudnative-pg.io
+# apiVersion: postgresql.cnpg.io/v1
+# kind: ScheduledBackup
+# metadata:
+#   name: keiba-db-daily
+#   namespace: keiba-db
+# spec:
+#   immediate: true                # 作成時に即1回バックアップ
+#   schedule: "0 0 18 * * *"       # 6フィールド(秒始まり)。18:00UTC = 翌03:00JST
+#   backupOwnerReference: self
+#   method: plugin
+#   cluster: { name: keiba-db }
+#   pluginConfiguration:
+#     name: barman-cloud.cloudnative-pg.io
