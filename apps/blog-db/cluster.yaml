@@ -1,0 +1,37 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: blog-db
+  namespace: blog-db
+spec:
+  instances: 1
+  bootstrap:
+    initdb:
+      database: pckeiba
+      owner: postgres
+      secret:
+        name: blog-db-app
+  enableSuperuserAccess: true
+  superuserSecret:
+    name: blog-db-superuser
+  storage:
+    size: 30Gi
+    storageClass: longhorn
+  managed:
+    services:
+      additional:
+        - selectorType: rw
+          updateStrategy: patch
+          serviceTemplate:
+            metadata:
+              name: blog-db-lb
+              annotations:
+                metallb.universe.tf/address-pool: internal-pool
+            spec:
+              type: LoadBalancer
+  # plugins:
+  #   - name: barman-cloud.cloudnative-pg.io
+  #     enabled: true
+  #     isWALArchiver: true
+  #     parameters:
+  #       barmanObjectName: blog-db-backup-store
