@@ -6,5 +6,5 @@ metadata:
   name: payload-blog-env
 data:
   NEXT_PUBLIC_SERVER_URL: "https://kousuke.dev"
-  S3_BUCKET: "payload-media"
+  S3_BUCKET: "kosuke-personal-blog-images-170463783977-ap-northeast-1-an"
   S3_REGION: "ap-northeast-1"
