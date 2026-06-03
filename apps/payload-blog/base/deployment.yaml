@@ -24,8 +24,6 @@ spec:
         app.kubernetes.io/name: payload-blog
         app.kubernetes.io/component: web
     spec:
-      imagePullSecrets:
-        - name: regcred # docker-registry secret for the private registry (created out-of-band)
       securityContext:
         runAsNonRoot: true
         runAsUser: 1001 # matches the `nextjs` user baked into the Dockerfile

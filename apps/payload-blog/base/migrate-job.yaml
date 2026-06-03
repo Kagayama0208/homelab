@@ -31,8 +31,6 @@ spec:
         app.kubernetes.io/component: migrate
     spec:
       restartPolicy: Never
-      imagePullSecrets:
-        - name: regcred
       containers:
         - name: migrate
           # Placeholder name; overlay `images:` transformer rewrites to the real
