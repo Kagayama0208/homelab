@@ -22,7 +22,7 @@ metadata:
 spec:
   project: default # adjust to your AppProject
   source:
-    repoURL: https://github.com/<you>/homelab.git # your homelab repo
+    repoURL: https://github.com/Kagayama0208/homelab.git # your homelab repo
     targetRevision: main
     path: apps/payload-blog/overlays/production # dir containing kustomization.yaml
   destination:
