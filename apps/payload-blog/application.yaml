@@ -1,0 +1,42 @@
+# ArgoCD Application — Payload blog (GitOps).
+#
+# TEMPLATE / reference copy. The live Application is managed in the homelab repo
+# (~/k8s/homelab/apps/payload-blog/). Fill in repoURL / targetRevision / path.
+#
+# ArgoCD renders Kustomize natively (no plugin): point `path` at the directory that
+# holds the production overlay's kustomization.yaml. The migrate Job is a PreSync
+# hook (see ../base/migrate-job.yaml), so migrations run to completion BEFORE the
+# Deployment/Service sync.
+#
+# Secrets: keep them GitOps-pure too — commit the SealedSecrets (blog-db-app,
+# payload-blog-secrets) into the same tree so ArgoCD applies them and the
+# sealed-secrets controller decrypts in-cluster. `regcred` can stay imperative or
+# be a SealedSecret as well.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: payload-blog
+  namespace: argocd # where ArgoCD runs; adjust if different
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io # cascade-delete managed resources on App delete
+spec:
+  project: default # adjust to your AppProject
+  source:
+    repoURL: https://github.com/<you>/homelab.git # your homelab repo
+    targetRevision: main
+    path: apps/payload-blog/overlays/production # dir containing kustomization.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: payload-blog
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true # creates the payload-blog ns (namespace.yaml may then be dropped from the overlay)
+  # No ignoreDifferences needed: spec.replicas was removed from the Deployment so the
+  # HPA owns the replica count without drift. If you ever re-add spec.replicas, add:
+  # ignoreDifferences:
+  #   - group: apps
+  #     kind: Deployment
+  #     jsonPointers: [/spec/replicas]

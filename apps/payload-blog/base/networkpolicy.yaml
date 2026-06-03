@@ -1,0 +1,77 @@
+# NetworkPolicies for a default-deny cluster.
+# Exposure is via a SHARED Cloudflare Tunnel running in the `cloudflare`
+# namespace (managed outside this project), so the only inbound traffic the app
+# needs is from cloudflared pods in that namespace.
+#
+# NOTE on the `cloudflare` namespace selector: adjust the namespaceSelector below
+# to match how your `cloudflare` namespace is labelled. `kubernetes.io/metadata.name`
+# is auto-added by Kubernetes to every namespace, so it is the safest match.
+---
+# Inbound: allow the shared cloudflared (cloudflare ns) to reach web pods on :3000.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: web-allow-tunnel-ingress
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: payload-blog
+      app.kubernetes.io/component: web
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: cloudflare
+      ports:
+        - protocol: TCP
+          port: 3000
+    # ⚠️ kubelet liveness/readiness probes originate from the node, NOT from a pod.
+    # Most CNIs (Calico failsafe ports, Cilium host firewall) allow host->pod by
+    # default. If probes are blocked in your CNI, uncomment and set your node CIDR:
+    # - from:
+    #     - ipBlock:
+    #         cidr: 10.0.0.0/16   # your nodes' CIDR
+    #       ports:
+    #         - { protocol: TCP, port: 3000 }
+---
+# Outbound: only needed if your default-deny ALSO covers egress.
+# If your default-deny is ingress-only, DELETE this policy — adding it switches
+# these pods to egress-deny-by-default (allowing only the rules below).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: web-egress
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: payload-blog # covers both web and migrate pods
+  policyTypes:
+    - Egress
+  egress:
+    # DNS (CoreDNS / kube-dns in kube-system)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - { protocol: UDP, port: 53 }
+        - { protocol: TCP, port: 53 }
+    # CloudNativePG Postgres — cluster `blog-db` in the `blog-db` namespace
+    # (the app runs in `payload-blog`, so this egress crosses namespaces).
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: blog-db
+          podSelector:
+            matchLabels:
+              cnpg.io/cluster: blog-db
+      ports:
+        - { protocol: TCP, port: 5432 }
+    # AWS S3 (media) over HTTPS. Restrict to AWS IP ranges if you want tighter egress.
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - { protocol: TCP, port: 443 }

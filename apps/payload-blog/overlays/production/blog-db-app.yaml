@@ -1,0 +1,13 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: blog-db-app
+  namespace: payload-blog
+spec:
+  encryptedData:
+    uri: AgAA10HXsWgRnoKPvofxUXCfHCPDpHH6W56AkA+wuiq0wDeL9645AAM+nmh+ibjQpxWdcXZj04cTrAXe61htRs/jJA0V7LDviXhYPlkUNtaGjDPW/4tcqyFtS3Hxn42qqxI+JnlRP33HhnT6bgmO8knlmKnrCJGSpwtETVXMBQ76DShtRDrxSE3qudix0u9fI04XADVRICNwzY8/W3fQqF23gIfmZF6S+NVlFPEukg8Ok9FEpKFeohtZdCwIJ7Ylio6KAMf///9Itw0dZ1l65l3HgHpCdM+ySdIsZwMMvIqxFHELKjvYzC7BPB38qkxlty0ZDfrJuqAP7hJ4zykKdW4TjgZU6ZV+WMQXHwT30ikxO3zHPpQLBC6FJVT+TYIn2mwHHgBZukxQW0lVZaR2VsVSATbDGDM9AkpIg7g/vcPn68Wf3mo862/HZ6WBf+qzMMJ0qAsHb58Hf6VPj58gWwrqHtjymp38rey0CDBrjZDpsMHgY/QePCztWyKxuHnrWCDWF2uasfrwFQXJEJhghYb7XJKfTVhwhAniXrZTh4/kJsofLs/6UzftkOaNeYmhbdg4h1wqYvKpuvQOxGUq2mjT/h5CKSXZz8JCR71jzzw13qgh26wgCxOswixvFEDI6WoQNFfzOQ3Fuqu2CyH1NJCWDs9g9nawjN7w8lfNm+uv7WR+0a8Oh7Vak6GRpeqEOELCbkBwJCyRmgb90/B3FlXK/CoClLA0WZzFHdT/C1LqCZvMwqG/hRsp6t+chVzfcImzhTVH6v49epMRsZ0RkKuz/agXwTgqHnKm2Wxly+7x0j5P6Td0kfkCl87g2qZou+It
+  template:
+    metadata:
+      name: blog-db-app
+      namespace: payload-blog

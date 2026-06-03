@@ -1,0 +1,61 @@
+# One-shot migration Job — applies committed Payload migrations
+# (src/migrations) before the app rolls out. Uses the `migrator` Docker target
+# (full node_modules + the `payload` CLI), NOT the slim standalone runner.
+#
+# Runs as root by design: it is a short-lived admin task and the `migrator` image
+# (FROM builder) owns its files as root. Harden later if your PodSecurity policy
+# requires non-root.
+#
+# ORDERING: under ArgoCD this is a PreSync hook — it runs to completion BEFORE the
+# Deployment/Service sync, so migrations always land first. `hook-delete-policy:
+# BeforeHookCreation` deletes the prior Job before recreating (Jobs are immutable,
+# so this avoids re-sync errors and keeps the latest). Plain `kubectl apply -k`
+# ignores these annotations and just creates a normal Job (see deploy/k8s/README.md).
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: payload-migrate
+  labels:
+    app.kubernetes.io/name: payload-blog
+    app.kubernetes.io/component: migrate
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 600 # auto-clean 10 min after completion
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: payload-blog
+        app.kubernetes.io/component: migrate
+    spec:
+      restartPolicy: Never
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: migrate
+          # Placeholder name; overlay `images:` transformer rewrites to the real
+          # registry path + `<git-sha>-migrate` tag.
+          image: payload-blog-migrate
+          command: ["node_modules/.bin/payload", "migrate"]
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: blog-db-app
+                  key: uri
+            - name: PAYLOAD_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: payload-blog-secrets
+                  key: PAYLOAD_SECRET
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 768Mi

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: payload-blog
+  labels:
+    app.kubernetes.io/name: payload-blog
+    app.kubernetes.io/component: web
+spec:
+  type: ClusterIP # exposed externally via the cloudflared tunnel, not an Ingress
+  selector:
+    app.kubernetes.io/name: payload-blog
+    app.kubernetes.io/component: web
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

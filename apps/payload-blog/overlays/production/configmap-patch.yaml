@@ -1,0 +1,10 @@
+# Production values. NEXT_PUBLIC_SERVER_URL MUST equal the --build-arg used to
+# build the image (it is baked into the bundle at build time).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payload-blog-env
+data:
+  NEXT_PUBLIC_SERVER_URL: "https://kousuke.dev"
+  S3_BUCKET: "payload-media"
+  S3_REGION: "ap-northeast-1"

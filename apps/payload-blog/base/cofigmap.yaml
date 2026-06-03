@@ -1,0 +1,21 @@
+# Non-secret runtime env for the app and migrate Job.
+# NOTE: NEXT_PUBLIC_SERVER_URL must EXACTLY match the --build-arg used when the
+# image was built (it is also baked into the bundle at build time). Override the
+# example values per environment via the overlay (see overlays/production).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payload-blog-env
+data:
+  NODE_ENV: "production"
+  NEXT_PUBLIC_SERVER_URL: "https://kousuke.dev"
+  PORT: "3000"
+  HOSTNAME: "0.0.0.0"
+  # AWS S3 media storage (non-secret parts). Credentials live in the Secret.
+  S3_BUCKET: "payload-media"
+  S3_REGION: "ap-northeast-1"
+  # Plausible analytics. Like NEXT_PUBLIC_SERVER_URL, this is baked into static
+  # pages at build time, so it MUST match the image's --build-arg PLAUSIBLE_DOMAIN.
+  PLAUSIBLE_DOMAIN: "kousuke.dev"
+  # Self-host only (default is plausible.io). If set, also pass it as a build-arg.
+  # PLAUSIBLE_SRC: 'https://<self-hosted>/js/script.js'

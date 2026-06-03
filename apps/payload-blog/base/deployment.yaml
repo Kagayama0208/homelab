@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payload-blog
+  labels:
+    app.kubernetes.io/name: payload-blog
+    app.kubernetes.io/component: web
+spec:
+  # No `replicas` here on purpose: the HPA (hpa.yaml, min 2 / max 4) owns the replica
+  # count. Setting it here would fight ArgoCD self-heal every time the HPA scales
+  # (perpetual OutOfSync). Stateless pods (media on S3, DB on CNPG) make this safe.
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: payload-blog
+      app.kubernetes.io/component: web
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: payload-blog
+        app.kubernetes.io/component: web
+    spec:
+      imagePullSecrets:
+        - name: regcred # docker-registry secret for the private registry (created out-of-band)
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001 # matches the `nextjs` user baked into the Dockerfile
+        runAsGroup: 1001
+        fsGroup: 1001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: app
+          # Placeholder name; the overlay's `images:` transformer rewrites this to
+          # the real registry path + pinned git-sha tag.
+          image: payload-blog-app
+          ports:
+            - name: http
+              containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: payload-blog-env
+            - secretRef:
+                name: payload-blog-secrets
+          env:
+            # DATABASE_URL comes from the `uri` key of the `blog-db-app` Secret in
+            # this namespace (delivered as a SealedSecret; the uri points at the
+            # cross-namespace CNPG service blog-db-rw.blog-db.svc.cluster.local).
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: blog-db-app
+                  key: uri
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 5
+            failureThreshold: 30 # ~150s grace for a cold Payload + Next start
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi # sharp image processing can spike; raise if OOMKilled on upload
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            # readOnlyRootFilesystem requires writable temp + Next ISR/image cache.
+            - name: tmp
+              mountPath: /tmp
+            - name: next-cache
+              mountPath: /app/.next/cache
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: next-cache
+          emptyDir: {}
