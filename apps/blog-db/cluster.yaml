@@ -18,6 +18,12 @@ spec:
     size: 10Gi          # 30Gi から縮小（Longhorn容量逼迫のため。詳細は調査履歴参照）
     storageClass: longhorn
   managed:
+    roles:
+      - name: blog
+        ensure: present
+        login: true
+        passwordSecret:
+          name: blog-db-app   # blog-db ns 内。password キーを参照
     services:
       additional:
         - selectorType: rw
