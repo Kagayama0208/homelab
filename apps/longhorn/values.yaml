@@ -1,5 +1,9 @@
 defaultSettings:
   defaultReplicaCount: 2
+  # ディスク予約30%+over-provisioning100%だとスケジュール枠が枯渇し
+  # 新規ボリュームが faulted になるため引き上げ。物理空きは十分で
+  # minimal-available 25% ガードが実ディスク逼迫を防ぐ。
+  storageOverProvisioningPercentage: 150
 persistence:
   defaultClassReplicaCount: 2
 longhorn:
