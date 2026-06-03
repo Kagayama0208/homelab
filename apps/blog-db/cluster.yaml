@@ -15,7 +15,7 @@ spec:
   superuserSecret:
     name: blog-db-superuser
   storage:
-    size: 30Gi
+    size: 10Gi          # 30Gi から縮小（Longhorn容量逼迫のため。詳細は調査履歴参照）
     storageClass: longhorn
   managed:
     services:
