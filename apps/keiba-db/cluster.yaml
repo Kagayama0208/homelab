@@ -15,7 +15,7 @@ spec:
   superuserSecret:
     name: keiba-db-superuser
   storage:
-    size: 60Gi
+    size: 80Gi
     storageClass: longhorn
   managed:
     services:
