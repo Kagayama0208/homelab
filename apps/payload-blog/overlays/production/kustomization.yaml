@@ -14,10 +14,10 @@ resources:
 images:
   - name: payload-blog-app
     newName: 192.168.10.54:5000/personal-blog
-    newTag: 0.0.5
+    newTag: 0.0.6
   - name: payload-blog-migrate
     newName: 192.168.10.54:5000/personal-blog
-    newTag: 0.0.5-migrate
+    newTag: 0.0.6-migrate
 
 # Production-specific env (must match the image's build-arg NEXT_PUBLIC_SERVER_URL).
 patches:
