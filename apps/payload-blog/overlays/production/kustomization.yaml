@@ -4,6 +4,8 @@ namespace: payload-blog
 
 resources:
   - ../../base
+  - blog-db-app.yaml
+  - payload-blog-secrets.yaml
 
 # Map the placeholder image names to the real private registry + pinned tags.
 # Build the two targets (app + migrator) from the same repo — see deploy/k8s/README.md.

@@ -11,5 +11,3 @@ resources:
   - networkpolicy.yaml
   - hpa.yaml
   - pdb.yaml
-  - blog-db-app.yaml
-  - payload-blog-secrets.yaml
