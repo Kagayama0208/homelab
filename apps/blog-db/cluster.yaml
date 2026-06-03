@@ -8,7 +8,7 @@ spec:
   bootstrap:
     initdb:
       database: blogdb
-      owner: postgres
+      owner: blog
       secret:
         name: blog-db-app
   enableSuperuserAccess: true
