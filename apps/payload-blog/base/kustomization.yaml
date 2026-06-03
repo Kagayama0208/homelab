@@ -11,3 +11,4 @@ resources:
   - networkpolicy.yaml
   - hpa.yaml
   - pdb.yaml
+  - httproute.yaml

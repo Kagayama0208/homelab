@@ -1,13 +1,13 @@
 # NetworkPolicies for a default-deny cluster.
-# Exposure is via a SHARED Cloudflare Tunnel running in the `cloudflare`
-# namespace (managed outside this project), so the only inbound traffic the app
-# needs is from cloudflared pods in that namespace.
+# Exposure is via the shared Cloudflare Tunnel → Envoy `external-gateway`
+# (see httproute.yaml). Traffic that actually reaches the web pods originates
+# from the Envoy proxy pods in the `envoy-gateway-system` namespace, NOT from
+# cloudflared, so that is the only inbound source the app needs.
 #
-# NOTE on the `cloudflare` namespace selector: adjust the namespaceSelector below
-# to match how your `cloudflare` namespace is labelled. `kubernetes.io/metadata.name`
-# is auto-added by Kubernetes to every namespace, so it is the safest match.
+# NOTE on the namespace selector: `kubernetes.io/metadata.name` is auto-added by
+# Kubernetes to every namespace, so it is the safest match.
 ---
-# Inbound: allow the shared cloudflared (cloudflare ns) to reach web pods on :3000.
+# Inbound: allow the Envoy external-gateway (envoy-gateway-system ns) to reach web pods on :3000.
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -23,7 +23,7 @@ spec:
     - from:
         - namespaceSelector:
             matchLabels:
-              kubernetes.io/metadata.name: cloudflare
+              kubernetes.io/metadata.name: envoy-gateway-system
       ports:
         - protocol: TCP
           port: 3000
