@@ -7,7 +7,7 @@ spec:
   instances: 1
   bootstrap:
     initdb:
-      database: pckeiba
+      database: blogdb
       owner: postgres
       secret:
         name: blog-db-app
