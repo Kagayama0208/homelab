@@ -1,4 +1,3 @@
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16,20 +15,20 @@ spec:
         app: bakepyon-ui
     spec:
       containers:
-      - name: bakepyon-ui
-        image: 192.168.10.54:5000/bakepyon-ui:0.0.97
-        env:
-        - name: API_BACKEND_URL
-          value: "keiba-api.keiba.svc.cluster.local:8000"
-        ports:
-        - containerPort: 80
-        resources:
-          requests:
-            cpu: 100m
-            memory: 128Mi
-          limits:
-            cpu: 500m
-            memory: 256Mi
+        - name: bakepyon-ui
+          image: 192.168.10.54:5000/bakepyon-ui:0.0.99
+          env:
+            - name: API_BACKEND_URL
+              value: "keiba-api.keiba.svc.cluster.local:8000"
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
 ---
 apiVersion: v1
 kind: Service
@@ -40,8 +39,8 @@ spec:
   selector:
     app: bakepyon-ui
   ports:
-  - port: 80
-    targetPort: 80
+    - port: 80
+      targetPort: 80
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -50,15 +49,15 @@ metadata:
   namespace: bakepyon-ui
 spec:
   parentRefs:
-  - name: external-gateway
-    namespace: envoy-gateway-system
+    - name: external-gateway
+      namespace: envoy-gateway-system
   hostnames:
-  - "bakepyon-ui.bakepyon.org"
+    - "bakepyon-ui.bakepyon.org"
   rules:
-  - matches:
-    - path:
-        type: PathPrefix
-        value: /
-    backendRefs:
-    - name: bakepyon-ui
-      port: 80
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: bakepyon-ui
+          port: 80
