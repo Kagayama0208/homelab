@@ -23,7 +23,8 @@ spec:
         fsGroup: 1000
       containers:
         - name: api
-          image: 192.168.10.54:5000/keiba-db-connector:0.0.43
+          image: 192.168.10.54:5000/keiba-db-connector:0.8.0
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
               protocol: TCP
@@ -86,5 +87,5 @@ spec:
   selector:
     app: keiba-api
   ports:
-  - port: 8000
-    targetPort: 8000
+    - port: 8000
+      targetPort: 8000
