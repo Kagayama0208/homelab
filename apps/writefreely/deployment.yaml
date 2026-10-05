@@ -35,29 +35,27 @@ spec:
       automountServiceAccountToken: false
       securityContext:
         fsGroup: 5000
+      initContainers:
+      - name: db-migrate
+        image: ghcr.io/writefreely/writefreely:v0.17.1
+        imagePullPolicy: IfNotPresent
+        args: ["-c", "/data/config.ini", "db", "migrate"]
+        securityContext:
+          runAsUser: 5000
+          runAsGroup: 5000
+        volumeMounts:
+        - name: data
+          mountPath: /data
       containers:
       - name: writefreely
-        image: algernon/writefreely:latest
+        image: ghcr.io/writefreely/writefreely:v0.17.1
+        imagePullPolicy: IfNotPresent
+        args: ["-c", "/data/config.ini"]
         securityContext:
           runAsUser: 5000
           runAsGroup: 5000
         ports:
         - containerPort: 8080
-        env:
-        - name: WRITEFREELY_SITE_NAME
-          value: "Kosuke's Notebook"
-        - name: WRITEFREELY_ADMIN_USER
-          valueFrom:
-            secretKeyRef:
-              name: writefreely-secret
-              key: admin_user
-        - name: WRITEFREELY_ADMIN_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: writefreely-secret
-              key: admin_password
-        - name: WRITEFREELY_SINGLE_USER
-          value: "true"
         volumeMounts:
         - name: data
           mountPath: /data
@@ -68,6 +66,18 @@ spec:
           limits:
             cpu: 200m
             memory: 128Mi
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 20
       volumes:
       - name: data
         persistentVolumeClaim:
